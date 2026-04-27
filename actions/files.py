@@ -1,15 +1,23 @@
 import os
+import platform
+import subprocess
 
 def open_file(path):
     try:
-        os.startfile(path)
-        return f"Opening file {path}"
-    except:
-        return "File not found"
+        if not os.path.exists(path):
+            return "File exist nahi karta"
 
-def list_files(directory):
-    try:
-        files = os.listdir(directory)
-        return ", ".join(files[:10])
-    except:
-        return "Directory not found"
+        system = platform.system()
+
+        if system == "Windows":
+            os.startfile(path)
+        elif system == "Darwin":  # macOS
+            subprocess.call(["open", path])
+        else:  # Linux
+            subprocess.call(["xdg-open", path])
+
+        return f"Opening file {path}"
+
+    except Exception as e:
+        print("Error:", e)
+        return "File open nahi ho paya"
